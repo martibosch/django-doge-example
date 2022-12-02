@@ -20,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.base.ref == 'stage' }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3.1.0
       - name: build and plan stage
         uses: ./.github/actions/build-and-plan
         with:
@@ -35,6 +37,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.base.ref == 'main' }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3.1.0
       - name: build and plan prod
         uses: ./.github/actions/build-and-plan
         with:
