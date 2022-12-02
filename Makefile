@@ -5,11 +5,13 @@ ENVS := stage prod
 VARS_FILENAME := vars.tfvars
 DEPLOY_DIR := $(TERRAFORM_DIR)/deploy
 META_DIR := $(DEPLOY_DIR)/meta
+DOTENV_DIR := $(DEPLOY_DIR)/dotenv
 BASE_DIR := $(DEPLOY_DIR)/base
 APP_DIR := $(DEPLOY_DIR)/app
 ENV_DIR = $(APP_DIR)/$(ENV)
+VARFILE_DIRS = $(META_DIR) $(DOTENV_DIR)
 DEPLOY_DIRS = $(BASE_DIR) $(foreach ENV, $(ENVS), $(ENV_DIR))
-WORKSPACE_DIRS = $(META_DIR) $(DEPLOY_DIRS)
+WORKSPACE_DIRS = $(VARFILE_DIRS) $(DEPLOY_DIRS)
 TARGET = $(notdir $(DIR))
 NOARGS_COMMANDS := init fmt validate
 COMMANDS := plan apply destroy
@@ -30,14 +32,15 @@ endef
 $(foreach COMMAND, $(NOARGS_COMMANDS), $(eval $(NOARGS_ALL_RULE)))
 
 # plan/apply/destroy
-## treat meta separatedly because of `-var-file`
-define META_COMMAND_RULE
-.PHONY: $(COMMAND)-meta
-$(COMMAND)-meta:
-	terraform -chdir="./$(META_DIR)" $(COMMAND) -var-file=$(VARS_FILENAME) \
+## treat meta and dotenv separatedly because of `-var-file`
+define VARFILE_COMMAND_RULE
+.PHONY: $(COMMAND)-$(TARGET)
+$(COMMAND)-$(TARGET):
+	terraform -chdir="./$(DIR)" $(COMMAND) -var-file=$(VARS_FILENAME) \
 		$(TF_FLAGS)
 endef
-$(foreach COMMAND, $(COMMANDS),	$(eval $(META_COMMAND_RULE)))
+$(foreach DIR, $(VARFILE_DIRS), $(foreach COMMAND, $(COMMANDS), \
+	$(eval $(VARFILE_COMMAND_RULE))))
 
 define COMMAND_RULE
 .PHONY: $(COMMAND)-$(TARGET)
