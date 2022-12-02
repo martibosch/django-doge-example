@@ -65,7 +65,7 @@ resource "github_branch_protection" "develop" {
 
   required_status_checks {
     strict   = true
-    contexts = ["build"]
+    contexts = ["pytest"]
   }
 }
 
