@@ -30,9 +30,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: checkout code repository
-      uses: actions/checkout@v3
-
     - name: build the stack
       run:  docker-compose ${{ inputs.compose-config-args }} up -d --build
 
