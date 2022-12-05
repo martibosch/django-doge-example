@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-plan-stage:
+  plan-stage:
     environment: stage
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.base.ref == 'stage' }}
@@ -34,7 +34,7 @@ jobs:
           stage-django: ${{ secrets.STAGING_DJANGO }}
           stage-traefik: ${{ secrets.STAGING_TRAEFIK }}
       - name: build and plan stage
-        uses: ./.github/actions/build-and-plan
+        uses: ./.github/actions/plan
         with:
           compose-config-args: "-f production.yml -f staging.yml"
           tf-api-token: ${{ secrets.TF_API_TOKEN }}
@@ -43,7 +43,7 @@ jobs:
           env: stage
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-  build-and-plan-prod:
+  plan-prod:
     environment: prod
     runs-on: ubuntu-latest
     if: ${{ github.event.pull_request.base.ref == 'main' }}
@@ -57,7 +57,7 @@ jobs:
           prod-postgres: ${{ secrets.PRODUCTION_POSTGRES }}
           prod-traefik: ${{ secrets.PRODUCTION_TRAEFIK }}
       - name: build and plan prod
-        uses: ./.github/actions/build-and-plan
+        uses: ./.github/actions/plan
         with:
           compose-config-args: "-f production.yml"
           tf-api-token: ${{ secrets.TF_API_TOKEN }}
