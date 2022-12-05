@@ -119,7 +119,7 @@ runs:
 
     - name: deploy with rsync
       shell: bash
-      run: rsync -avz ./app ${{ inputs.droplet-user }}@${{ inputs.droplet-host }}:~
+      run: rsync -avz . ${{ inputs.droplet-user }}@${{ inputs.droplet-host }}:~
 
     - name: docker compose up
       uses: appleboy/ssh-action@master
