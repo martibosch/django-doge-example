@@ -1,4 +1,4 @@
-name: build and plan
+name: plan
 description: Github Action to build (Docker) and plan (Terraform) changes.
 branding:
   icon: 'cloud'

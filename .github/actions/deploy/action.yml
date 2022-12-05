@@ -1,5 +1,5 @@
-name: build and plan
-description: Github Action to build (Docker) and plan (Terraform) changes.
+name: deploy
+description: Github Action to deploy changes.
 branding:
   icon: 'cloud'
   color: 'orange'
@@ -119,7 +119,7 @@ runs:
 
     - name: deploy with rsync
       shell: bash
-      run: rsync -avz ./app ${{ inputs.droplet-user }}@${{ inputs.droplet-host }}:~
+      run: rsync -avz . ${{ inputs.droplet-user }}@${{ inputs.droplet-host }}:~
 
     - name: docker compose up
       uses: appleboy/ssh-action@master

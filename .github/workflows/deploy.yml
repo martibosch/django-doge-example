@@ -30,7 +30,7 @@ jobs:
         run: echo "::set-output name=branch::$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
 
-  plan-and-apply-stage:
+  deploy-stage:
     needs: extract-branch
     environment: stage
     runs-on: ubuntu-latest
@@ -50,7 +50,7 @@ jobs:
           stage-django: ${{ secrets.STAGING_DJANGO }}
           stage-traefik: ${{ secrets.STAGING_TRAEFIK }}
       - name: plan and apply stage
-        uses: ./.github/actions/plan-and-apply
+        uses: ./.github/actions/deploy
         with:
           tf-api-token: ${{ secrets.TF_API_TOKEN }}
           ssh-key: ${{ secrets.TF_API_TOKEN }}
@@ -60,7 +60,7 @@ jobs:
           droplet-user: ${{ secrets.DROPLET_USER }}
           compose-config-args: "-f production.yml -f staging.yml"
 
-  plan-and-apply-prod:
+  deploy-prod:
     needs: extract-branch
     environment: prod
     runs-on: ubuntu-latest
@@ -75,7 +75,7 @@ jobs:
           prod-postgres: ${{ secrets.PRODUCTION_POSTGRES }}
           prod-traefik: ${{ secrets.PRODUCTION_TRAEFIK }}
       - name: plan and apply stage
-        uses: ./.github/actions/plan-and-apply
+        uses: ./.github/actions/deploy
         with:
           tf-api-token: ${{ secrets.TF_API_TOKEN }}
           ssh-key: ${{ secrets.TF_API_TOKEN }}
