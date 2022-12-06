@@ -1,5 +1,5 @@
-name: build and plan
-description: Github Action to build (Docker) and plan (Terraform) changes.
+name: deploy
+description: Github Action to deploy changes.
 branding:
   icon: 'cloud'
   color: 'orange'
@@ -33,9 +33,6 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: checkout code repository
-      uses: actions/checkout@v3
-
     - name: setup terraform
       uses: hashicorp/setup-terraform@v1
       with:
@@ -51,20 +48,24 @@ runs:
         if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
 
     - name: add known hosts
+      shell: bash
       run: ssh-keyscan -H ${{ inputs.droplet-host }} >> ~/.ssh/known_hosts
 
     - name: initialize terraform
+      shell: bash
       run: make init-${{ inputs.env }} TF_FLAGS="-input=false"
 
     - name: plan terraform
       id: plan
       continue-on-error: true
+      shell: bash
       run: make plan-${{ inputs.env }} TF_FLAGS="-input=false -no-color"
 
     - name: apply terraform
       if: steps.plan.outcome == 'success'
       id: apply
       continue-on-error: true
+      shell: bash
       run: make apply-${{ inputs.env }} TF_FLAGS="-auto-approve -input=false -no-color"
 
     - name: post plan and apply to github PR
@@ -96,6 +97,7 @@ runs:
 
     - name: fail if plan fails
       if: steps.plan.outcome == 'failure'
+      shell: bash
       run: exit 1
 
     - name: add apply failure to PR
@@ -112,10 +114,12 @@ runs:
 
     - name: fail if apply fails
       if: steps.apply.outcome == 'failure'
+      shell: bash
       run: exit 1
 
     - name: deploy with rsync
-      run: rsync -avz ./app ${{ inputs.droplet-user }}@${{ inputs.droplet-host }}:~
+      shell: bash
+      run: rsync -avz . ${{ inputs.droplet-user }}@${{ inputs.droplet-host }}:~
 
     - name: docker compose up
       uses: appleboy/ssh-action@master
