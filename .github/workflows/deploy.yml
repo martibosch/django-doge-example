@@ -74,13 +74,13 @@ jobs:
           prod-django: ${{ secrets.PRODUCTION_DJANGO }}
           prod-postgres: ${{ secrets.PRODUCTION_POSTGRES }}
           prod-traefik: ${{ secrets.PRODUCTION_TRAEFIK }}
-      - name: plan and apply stage
+      - name: plan and apply prod
         uses: ./.github/actions/deploy
         with:
           tf-api-token: ${{ secrets.TF_API_TOKEN }}
           ssh-key: ${{ secrets.SSH_KEY }}
           droplet-host: ${{ secrets.DROPLET_HOST }}
-          env: stage
+          env: prod
           github-token: ${{ secrets.GITHUB_TOKEN }}
           droplet-user: ${{ secrets.DROPLET_USER }}
           compose-config-args: "-f production.yml"
