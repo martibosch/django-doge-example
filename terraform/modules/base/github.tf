@@ -77,7 +77,7 @@ resource "github_branch_protection" "stage" {
 
   required_status_checks {
     strict   = true
-    contexts = ["build-and-plan-stage"]
+    contexts = ["plan-stage"]
   }
 }
 
@@ -89,6 +89,6 @@ resource "github_branch_protection" "main" {
 
   required_status_checks {
     strict   = true
-    contexts = ["build-and-plan-prod"]
+    contexts = ["plan-prod"]
   }
 }
